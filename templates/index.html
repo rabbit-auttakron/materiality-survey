@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>แบบสอบถาม Materiality Assessment | PET Recycle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f0faf4;color:#1a3a2a;line-height:1.6}
+
+/* ── NAV ── */
+nav{background:#1a5c32;color:#fff;padding:14px 24px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+nav .logo{font-size:1.5rem}
+nav h1{font-size:1.1rem;font-weight:600;flex:1}
+nav a{color:#a5d6a7;font-size:.85rem;text-decoration:none}
+nav a:hover{color:#fff}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#1b5e20 0%,#2e7d32 50%,#388e3c 100%);color:#fff;padding:56px 24px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'♻ 🍶 ♻ 🍶 ♻ 🍶 ♻ 🍶 ♻';position:absolute;top:-10px;left:0;right:0;font-size:3rem;opacity:.06;letter-spacing:8px;white-space:nowrap}
+.hero h2{font-size:2rem;font-weight:700;margin-bottom:8px}
+.hero p{font-size:1.05rem;opacity:.9;max-width:640px;margin:0 auto 6px}
+.badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:.82rem;margin-top:10px}
+
+/* ── PHASE ── */
+.phase{background:#fff;border-left:5px solid #2e7d32;border-radius:4px;padding:18px 20px;margin:24px auto;max-width:860px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.phase h3{color:#2e7d32;font-size:.95rem;font-weight:700;margin-bottom:10px}
+.phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.phase-item{background:#f1f8e9;border-radius:6px;padding:8px 12px;font-size:.85rem}
+.phase-item strong{color:#1b5e20;display:block;margin-bottom:2px}
+.phase-item span{color:#555}
+
+/* ── CARDS ── */
+.section-title{text-align:center;margin:36px 0 20px;font-size:1.2rem;font-weight:600;color:#1b5e20}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:960px;margin:0 auto;padding:0 20px 40px}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.card:hover{transform:translateY(-4px);box-shadow:0 6px 24px rgba(0,0,0,.14)}
+.card-top{padding:22px 20px 16px;border-bottom:1px solid #f0f0f0}
+.card-icon{font-size:2.4rem;margin-bottom:8px}
+.card-name{font-size:1.05rem;font-weight:700;color:#1a3a2a}
+.card-desc{font-size:.82rem;color:#666;margin-top:4px;line-height:1.4}
+.card-bottom{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:#888}
+.card-bottom .topics-count{background:#e8f5e9;color:#2e7d32;border-radius:20px;padding:2px 10px;font-weight:600}
+.card-cta{color:#2e7d32;font-weight:600}
+
+/* ── INFO ── */
+.info-bar{background:#e8f5e9;border-top:1px solid #c8e6c9;padding:14px 24px;text-align:center;font-size:.83rem;color:#555}
+.info-bar strong{color:#1b5e20}
+
+/* ── FOOTER ── */
+footer{background:#1a3a2a;color:#a5d6a7;text-align:center;padding:18px;font-size:.8rem}
+footer a{color:#81c784;text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">♻</span>
+  <h1>แบบสอบถามประเมิน Materiality Assessment | อุตสาหกรรมพลาสติก PET</h1>
+  <a href="/admin">Admin ▸</a>
+</nav>
+
+<div class="hero">
+  <h2>🌿 ร่วมสำรวจประเด็นสาระสำคัญด้าน ESG</h2>
+  <p>ผลการสำรวจนี้จะนำไปกำหนด <strong>Material Topics</strong> สำหรับรายงานความยั่งยืน<br>
+     ตามมาตรฐาน <strong>GRI Standards 2021</strong> ของบริษัท</p>
+  <div class="badge">อุตสาหกรรม: การผลิตพลาสติกและบรรจุภัณฑ์ PET &nbsp;|&nbsp; ใช้เวลา 10–15 นาที &nbsp;|&nbsp; ข้อมูลเป็นความลับ</div>
+</div>
+
+<div class="phase">
+  <h3>📋 ประเด็น ESG ที่ระบุเบื้องต้นสำหรับอุตสาหกรรมพลาสติก PET (GRI 2021)</h3>
+  <div class="phase-grid">
+    <div class="phase-item"><strong>⬤⬤⬤ สูงมาก</strong><span>GHG &amp; Net Zero | ของเสียพลาสติก | มลพิษสารเคมี | ความปลอดภัยพนักงาน | การใช้น้ำ</span></div>
+    <div class="phase-item"><strong>⬤⬤○ สูง</strong><span>พลังงานหมุนเวียน | คุณภาพผลิตภัณฑ์ | ห่วงโซ่อุปทาน | พัฒนาทักษะ | ชุมชนท้องถิ่น</span></div>
+    <div class="phase-item"><strong>⬤○○ ปานกลาง</strong><span>ความหลากหลายทางชีวภาพ | สิทธิมนุษยชน | ธรรมาภิบาล | ความเป็นส่วนตัวข้อมูล</span></div>
+  </div>
+</div>
+
+<div class="section-title">เลือกกลุ่มผู้มีส่วนได้เสียของคุณ</div>
+
+<div class="cards">
+  {% for key, val in survey.items() %}
+  <a class="card" href="/survey/{{ key }}" style="border-top:4px solid {{ val.color }}">
+    <div class="card-top">
+      <div class="card-icon">{{ val.icon }}</div>
+      <div class="card-name">ชุดที่ {{ loop.index }}: {{ val.name }}</div>
+      <div class="card-desc">{{ val.desc }}</div>
+    </div>
+    <div class="card-bottom">
+      <span class="topics-count">{{ val.topics|length }} ประเด็น</span>
+      <span class="card-cta">เริ่มตอบแบบสอบถาม →</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<div class="info-bar">
+  <strong>หมายเหตุ:</strong> ประเด็นในแบบสอบถามปรับสำหรับบริษัทผลิตพลาสติก PET โดยเฉพาะ
+  เพิ่มประเด็น Circular Economy, สารเคมีอันตราย (BPA, Phthalates) และ Extended Producer Responsibility (EPR)
+</div>
+
+<footer>
+  &copy; 2569 | ระบบสำรวจ Materiality Assessment | อ้างอิง GRI Standards 2021 (Single Materiality)
+  &nbsp;|&nbsp; <a href="/admin">จัดการข้อมูล</a>
+</footer>
+
+</body>
+</html>

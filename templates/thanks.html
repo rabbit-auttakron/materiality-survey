@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ขอบคุณสำหรับการตอบแบบสอบถาม</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f0faf4;display:flex;flex-direction:column;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:24px}
+.card{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.1);padding:48px 40px;max-width:520px;width:100%}
+.check{font-size:5rem;margin-bottom:16px;animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.2)}100%{transform:scale(1)}}
+h1{font-size:1.6rem;font-weight:700;color:#1b5e20;margin-bottom:10px}
+p{color:#555;font-size:.95rem;line-height:1.6;margin-bottom:8px}
+.divider{border:none;border-top:1px solid #eee;margin:24px 0}
+.impact{background:#e8f5e9;border-radius:10px;padding:16px;margin-bottom:24px}
+.impact h3{font-size:.9rem;font-weight:700;color:#2e7d32;margin-bottom:8px}
+.impact ul{list-style:none;font-size:.85rem;color:#444;line-height:1.8}
+.impact ul li::before{content:'✓ ';color:#2e7d32;font-weight:700}
+.btn{display:inline-block;background:#2e7d32;color:#fff;text-decoration:none;border-radius:8px;padding:12px 32px;font-family:inherit;font-size:.95rem;font-weight:700;transition:filter .18s;margin:6px}
+.btn:hover{filter:brightness(1.12)}
+.btn.outline{background:#fff;color:#2e7d32;border:2px solid #2e7d32}
+.share-note{font-size:.8rem;color:#999;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="check">✅</div>
+  <h1>ขอบคุณสำหรับความเห็นของคุณ!</h1>
+  <p>แบบสอบถามของคุณถูกบันทึกเรียบร้อยแล้ว<br>ข้อมูลจะถูกนำไปวิเคราะห์เพื่อประเมิน Materiality Topics</p>
+
+  <hr class="divider">
+
+  <div class="impact">
+    <h3>🌿 ข้อมูลของคุณจะนำไปใช้เพื่อ:</h3>
+    <ul>
+      <li>กำหนดประเด็นสาระสำคัญ (Material Topics) ตาม GRI 2021</li>
+      <li>จัดทำรายงานความยั่งยืนของบริษัท</li>
+      <li>วางแผนปรับปรุงการดำเนินงานด้าน ESG</li>
+      <li>สนับสนุนเป้าหมาย Circular Economy และ Net Zero</li>
+    </ul>
+  </div>
+
+  <a class="btn" href="/">← กลับหน้าหลัก</a>
+  <a class="btn outline" href="javascript:history.back()">ตอบอีกครั้ง</a>
+
+  <div class="share-note">
+    📲 แชร์แบบสอบถามนี้ให้เพื่อนร่วมงานหรือผู้มีส่วนได้เสียท่านอื่น<br>
+    เพื่อให้ได้ข้อมูลที่ครบถ้วนยิ่งขึ้น
+  </div>
+</div>
+</body>
+</html>

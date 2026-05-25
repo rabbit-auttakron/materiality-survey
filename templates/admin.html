@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard | Materiality Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f4f6f9;color:#1a2a1a;font-size:14px}
+
+/* ── layout ── */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:768px){.layout{grid-template-columns:1fr}}
+
+/* ── sidebar ── */
+.sidebar{background:#1a3a2a;color:#c8e6c9;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+@media(max-width:768px){.sidebar{display:none}}
+.sidebar-logo{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-logo h2{color:#fff;font-size:1rem;font-weight:700}
+.sidebar-logo p{font-size:.73rem;color:#81c784;margin-top:2px}
+.sidebar nav a{display:flex;align-items:center;gap:10px;padding:11px 18px;text-decoration:none;color:#a5d6a7;font-size:.85rem;transition:background .15s;border-left:3px solid transparent}
+.sidebar nav a:hover,.sidebar nav a.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:#66bb6a}
+.sidebar nav .divider{padding:8px 18px;font-size:.7rem;color:#558b2f;text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
+.sidebar-bottom{padding:14px 18px;border-top:1px solid rgba(255,255,255,.1);margin-top:auto}
+.sidebar-bottom a{color:#ef9a9a;font-size:.8rem;text-decoration:none}
+
+/* ── main ── */
+.main{overflow-y:auto}
+.topbar{background:#fff;border-bottom:1px solid #e0e0e0;padding:12px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:50}
+.topbar h1{font-size:1rem;font-weight:700;flex:1;color:#1a3a2a}
+.topbar .meta{font-size:.78rem;color:#888}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:6px;font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:filter .15s;border:none}
+.btn-green{background:#2e7d32;color:#fff}.btn-green:hover{filter:brightness(1.1)}
+.btn-out{background:#fff;color:#2e7d32;border:1.5px solid #2e7d32}.btn-out:hover{background:#f1f8e9}
+.btn-red{background:#fff;color:#c62828;border:1.5px solid #e57373}.btn-red:hover{background:#ffebee}
+
+.content{padding:20px 24px 40px}
+
+/* ── stat cards ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+.stat-card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.stat-card .val{font-size:2rem;font-weight:700;line-height:1}
+.stat-card .lbl{font-size:.78rem;color:#888;margin-top:4px}
+.stat-card .sub{font-size:.72rem;color:#aaa;margin-top:2px}
+
+/* ── section heading ── */
+.sec-head{display:flex;align-items:center;gap:10px;margin:24px 0 12px}
+.sec-head h2{font-size:.95rem;font-weight:700;color:#1a3a2a}
+.sec-head .line{flex:1;border-top:1px solid #e0e0e0}
+
+/* ── charts grid ── */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:16px}
+.chart-card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.chart-card h3{font-size:.85rem;font-weight:700;color:#333;margin-bottom:14px}
+.chart-wrap{position:relative;height:240px}
+.chart-wrap-tall{position:relative;height:320px}
+
+/* ── filter tabs ── */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tab{padding:5px 14px;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;border:1.5px solid #ddd;background:#fff;color:#666;transition:all .15s}
+.tab.active,.tab:hover{border-color:#2e7d32;background:#e8f5e9;color:#2e7d32}
+
+/* ── topic table ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#f4f6f9;font-size:.78rem;font-weight:700;color:#555;padding:9px 12px;text-align:left;border-bottom:2px solid #e0e0e0}
+td{padding:8px 12px;font-size:.82rem;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:hover td{background:#f9fbf9}
+.gri-badge{background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 7px;font-size:.7rem;font-weight:700}
+.bar-cell{display:flex;align-items:center;gap:8px}
+.bar-bg{flex:1;background:#eee;border-radius:4px;height:8px;min-width:80px}
+.bar-fill{height:8px;border-radius:4px;background:#2e7d32;transition:width .4s}
+.score{font-weight:700;color:#1b5e20;min-width:28px}
+.rank-1{color:#f9a825;font-size:.9rem}
+.rank-2{color:#9e9e9e;font-size:.9rem}
+.rank-3{color:#a1887f;font-size:.9rem}
+
+/* ── responses table ── */
+.stype-chip{display:inline-block;border-radius:20px;padding:2px 10px;font-size:.73rem;font-weight:600;color:#fff}
+.chip-investor{background:#1565C0}
+.chip-customer{background:#00838F}
+.chip-employee{background:#558B2F}
+.chip-community{background:#2E7D32}
+.chip-supplier{background:#6A1B9A}
+
+/* ── open answers panel ── */
+.answer-panel{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 5px rgba(0,0,0,.07);margin-top:16px}
+.answer-panel h3{font-size:.85rem;font-weight:700;margin-bottom:12px;color:#333}
+.answer-item{border-left:3px solid #2e7d32;padding:8px 12px;margin-bottom:8px;background:#f9fbf9;border-radius:0 6px 6px 0;font-size:.83rem;color:#444;line-height:1.5}
+.answer-meta{font-size:.73rem;color:#aaa;margin-top:3px}
+
+/* ── empty state ── */
+.empty{text-align:center;padding:48px 20px;color:#bbb}
+.empty .icon{font-size:3rem;margin-bottom:12px}
+
+/* ── loading ── */
+.loading{text-align:center;padding:40px;color:#888}
+
+/* ── matrix ── */
+.matrix-wrap{overflow-x:auto}
+.matrix-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.matrix-table th{padding:8px 6px;text-align:center;background:#f4f6f9;font-size:.72rem;color:#666;writing-mode:vertical-lr;transform:rotate(180deg);height:90px;font-weight:600}
+.matrix-table th:first-child{writing-mode:horizontal-tb;transform:none;text-align:left;height:auto;width:200px}
+.matrix-table td{padding:5px 6px;text-align:center;border:1px solid #eee}
+.heat{border-radius:4px;padding:3px 0;font-weight:600;font-size:.8rem}
+.h0{background:#fff;color:#ccc}
+.h1{background:#ffcdd2;color:#c62828}
+.h2{background:#ffe0b2;color:#e65100}
+.h3{background:#fff9c4;color:#f57f17}
+.h4{background:#dcedc8;color:#33691e}
+.h5{background:#a5d6a7;color:#1b5e20}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>♻ Admin Dashboard</h2>
+    <p>Materiality Survey 2569</p>
+  </div>
+  <nav>
+    <div class="divider">ภาพรวม</div>
+    <a href="#overview" class="active">📊 สรุปภาพรวม</a>
+    <a href="#charts">📈 กราฟสถิติ</a>
+    <a href="#ranking">🏆 อันดับประเด็น ESG</a>
+    <div class="divider">วิเคราะห์รายกลุ่ม</div>
+    <a href="#by-type">👥 แยกตามกลุ่มผู้มีส่วนได้เสีย</a>
+    <a href="#heatmap">🗺️ Materiality Heatmap</a>
+    <div class="divider">ข้อมูล</div>
+    <a href="#responses">📋 รายการตอบแบบสอบถาม</a>
+    <a href="#open-answers">💬 คำตอบเปิด</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <a href="/admin/logout">🚪 ออกจากระบบ</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <div class="topbar">
+    <h1>📊 Admin Dashboard – ระบบสำรวจ Materiality Assessment</h1>
+    <span class="meta" id="lastUpdate">กำลังโหลด…</span>
+    <a class="btn btn-green" href="/export/csv">⬇ Export CSV</a>
+    <a class="btn btn-out" href="/" target="_blank">🌐 ดูหน้าสำรวจ</a>
+    <a class="btn btn-red" href="/admin/logout">ออก</a>
+  </div>
+
+  <div class="content">
+
+    <!-- ── STAT CARDS ── -->
+    <div id="overview" class="stat-grid">
+      <div class="stat-card">
+        <div class="val" id="totalResp" style="color:#2e7d32">–</div>
+        <div class="lbl">จำนวนผู้ตอบทั้งหมด</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="topicCount" style="color:#1565C0">5</div>
+        <div class="lbl">กลุ่มผู้มีส่วนได้เสีย</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="avgScore" style="color:#F57F17">–</div>
+        <div class="lbl">คะแนนเฉลี่ยรวม</div>
+        <div class="sub">จาก 5 คะแนน</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="topTopic" style="color:#558B2F;font-size:1.1rem">–</div>
+        <div class="lbl">ประเด็นสำคัญสูงสุด</div>
+      </div>
+    </div>
+
+    <!-- ── CHARTS ── -->
+    <div id="charts" class="sec-head"><h2>📈 กราฟสถิติ</h2><div class="line"></div></div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>จำนวนผู้ตอบแยกตามกลุ่มผู้มีส่วนได้เสีย</h3>
+        <div class="chart-wrap"><canvas id="chartDoughnut"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Top 10 ประเด็น ESG – คะแนนเฉลี่ยรวมทุกกลุ่ม</h3>
+        <div class="chart-wrap"><canvas id="chartTopics"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── RANKING ── -->
+    <div id="ranking" class="sec-head"><h2>🏆 อันดับประเด็น ESG (คะแนนเฉลี่ยรวมทุกกลุ่ม)</h2><div class="line"></div></div>
+    <div class="chart-card">
+      <div class="tbl-wrap">
+        <table id="rankTable">
+          <thead><tr><th>#</th><th>ประเด็น ESG</th><th>คะแนนเฉลี่ย</th><th>จำนวนที่ตอบ</th><th>สัดส่วน</th></tr></thead>
+          <tbody id="rankBody"><tr><td colspan="5" class="loading">กำลังโหลด…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── BY TYPE ── -->
+    <div id="by-type" class="sec-head"><h2>👥 วิเคราะห์แยกตามกลุ่มผู้มีส่วนได้เสีย</h2><div class="line"></div></div>
+    <div class="tabs" id="typeTabs"></div>
+    <div class="chart-grid">
+      <div class="chart-card" style="grid-column:1/-1">
+        <h3 id="typeChartTitle">คะแนนเฉลี่ยรายประเด็น</h3>
+        <div class="chart-wrap-tall"><canvas id="chartTypeBar"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="tbl-wrap">
+        <table id="typeTable">
+          <thead><tr><th>ประเด็น ESG</th><th>GRI</th><th>คะแนนเฉลี่ย</th><th>N</th><th>สัดส่วน</th></tr></thead>
+          <tbody id="typeBody"><tr><td colspan="5" class="loading">เลือกกลุ่มด้านบน</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── HEATMAP ── -->
+    <div id="heatmap" class="sec-head"><h2>🗺️ Materiality Heatmap – คะแนนรายประเด็นแต่ละกลุ่ม</h2><div class="line"></div></div>
+    <div class="chart-card">
+      <div class="matrix-wrap" id="heatmapWrap"><div class="loading">กำลังโหลด…</div></div>
+    </div>
+
+    <!-- ── RESPONSES ── -->
+    <div id="responses" class="sec-head"><h2>📋 รายการตอบแบบสอบถามล่าสุด</h2><div class="line"></div></div>
+    <div class="chart-card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>กลุ่ม</th><th>ชื่อ</th><th>องค์กร</th><th>วันเวลา</th></tr></thead>
+          <tbody id="recentBody"><tr><td colspan="5" class="loading">กำลังโหลด…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── OPEN ANSWERS ── -->
+    <div id="open-answers" class="sec-head"><h2>💬 คำตอบเปิด (Open-ended)</h2><div class="line"></div></div>
+    <div class="tabs" id="openTabs"></div>
+    <div id="openAnswersWrap"><div class="loading">กำลังโหลด…</div></div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+const STYPE_COLORS = {
+  investor:  '#1565C0',
+  customer:  '#00838F',
+  employee:  '#558B2F',
+  community: '#2E7D32',
+  supplier:  '#6A1B9A',
+};
+const CHIP = {
+  investor:  'chip-investor',
+  customer:  'chip-customer',
+  employee:  'chip-employee',
+  community: 'chip-community',
+  supplier:  'chip-supplier',
+};
+
+let statsData = null;
+let typeBarChart = null;
+let currentType = null;
+
+// ── fetch & render all ──────────────────────────────────────────────────
+async function loadStats(){
+  try {
+    const r = await fetch('/api/stats');
+    if(!r.ok){ alert('Session หมดอายุ กรุณาเข้าสู่ระบบใหม่'); location.href='/admin'; return; }
+    statsData = await r.json();
+    renderAll();
+  } catch(e){ console.error(e); }
+}
+
+function renderAll(){
+  const d = statsData;
+  document.getElementById('lastUpdate').textContent = 'อัพเดต: ' + new Date().toLocaleTimeString('th-TH');
+
+  // stat cards
+  document.getElementById('totalResp').textContent = d.total;
+  if(d.global_rank.length){
+    const allScores = d.global_rank.filter(x=>x.avg).map(x=>x.avg);
+    const overallAvg = allScores.length ? (allScores.reduce((a,b)=>a+b,0)/allScores.length).toFixed(2) : '–';
+    document.getElementById('avgScore').textContent = overallAvg;
+    document.getElementById('topTopic').textContent = d.global_rank[0].name.substring(0,40)+'…';
+  }
+
+  renderDoughnut(d);
+  renderTopicsChart(d);
+  renderRankTable(d);
+  renderTypeTabs(d);
+  renderHeatmap(d);
+  renderRecent(d);
+  renderOpenTabs(d);
+}
+
+// ── Doughnut chart ──────────────────────────────────────────────────────
+function renderDoughnut(d){
+  const labels=[], values=[], colors=[];
+  for(const [k,v] of Object.entries(d.survey)){
+    if(d.by_type[k]){
+      labels.push(v.name);
+      values.push(d.by_type[k]);
+      colors.push(STYPE_COLORS[k]);
+    }
+  }
+  if(!values.length){
+    document.getElementById('chartDoughnut').closest('.chart-card').innerHTML='<div class="empty"><div class="icon">📭</div>ยังไม่มีข้อมูล</div>';
+    return;
+  }
+  new Chart(document.getElementById('chartDoughnut'),{
+    type:'doughnut',
+    data:{ labels, datasets:[{ data:values, backgroundColor:colors, borderWidth:2 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right', labels:{ font:{family:'Sarabun',size:11}, padding:12 } } }
+    }
+  });
+}
+
+// ── Top Topics bar chart ────────────────────────────────────────────────
+function renderTopicsChart(d){
+  const top10 = d.global_rank.filter(x=>x.avg).slice(0,10);
+  if(!top10.length) return;
+  const labels = top10.map(x=>x.name.length>30?x.name.substring(0,30)+'…':x.name);
+  const values = top10.map(x=>x.avg);
+  new Chart(document.getElementById('chartTopics'),{
+    type:'bar',
+    data:{ labels, datasets:[{ label:'คะแนนเฉลี่ย', data:values,
+      backgroundColor: values.map(v => v>=4.5?'#1b5e20': v>=3.5?'#2e7d32': v>=2.5?'#66bb6a':'#a5d6a7'),
+      borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      scales:{ x:{ min:0, max:5, ticks:{font:{family:'Sarabun',size:10}} },
+               y:{ ticks:{font:{family:'Sarabun',size:10}} } },
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label: ctx => `คะแนนเฉลี่ย: ${ctx.raw} (${top10[ctx.dataIndex].n} คน)` } } }
+    }
+  });
+}
+
+// ── Rank table ─────────────────────────────────────────────────────────
+function renderRankTable(d){
+  const tbody = document.getElementById('rankBody');
+  if(!d.global_rank.length){
+    tbody.innerHTML='<tr><td colspan="5" class="empty">ยังไม่มีข้อมูล</td></tr>'; return;
+  }
+  tbody.innerHTML = d.global_rank.map((item,i)=>{
+    const pct = item.avg ? Math.round(item.avg/5*100) : 0;
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    return `<tr>
+      <td>${medal||'#'+(i+1)}</td>
+      <td>${item.name}</td>
+      <td><span class="score">${item.avg||'–'}</span></td>
+      <td>${item.n}</td>
+      <td>
+        <div class="bar-cell">
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <span style="font-size:.75rem;color:#888">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Type tabs ───────────────────────────────────────────────────────────
+function renderTypeTabs(d){
+  const wrap = document.getElementById('typeTabs');
+  wrap.innerHTML = Object.entries(d.survey).map(([k,v])=>
+    `<button class="tab" data-k="${k}" onclick="switchType('${k}')">${v.icon} ${v.name}</button>`
+  ).join('');
+  // pick first type that has data
+  const firstType = Object.keys(d.by_type)[0] || Object.keys(d.survey)[0];
+  switchType(firstType);
+}
+
+function switchType(k){
+  currentType = k;
+  document.querySelectorAll('#typeTabs .tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.k===k);
+  });
+  const d = statsData;
+  const info = d.survey[k];
+  const avgs = d.averages[k] || [];
+  document.getElementById('typeChartTitle').textContent = `${info.icon} ${info.name} – คะแนนเฉลี่ยรายประเด็น`;
+
+  // bar chart
+  const labels = avgs.map(x=>x.name.length>35?x.name.substring(0,35)+'…':x.name);
+  const values = avgs.map(x=>x.avg);
+  const color  = STYPE_COLORS[k];
+
+  if(typeBarChart) typeBarChart.destroy();
+  typeBarChart = new Chart(document.getElementById('chartTypeBar'),{
+    type:'bar',
+    data:{ labels, datasets:[{ label:'คะแนนเฉลี่ย', data:values,
+      backgroundColor: color+'cc', borderColor: color, borderWidth:1, borderRadius:5 }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      scales:{ x:{ min:0, max:5, ticks:{font:{family:'Sarabun',size:10}} },
+               y:{ ticks:{font:{family:'Sarabun',size:10}} } },
+      plugins:{ legend:{display:false} }
+    }
+  });
+
+  // table
+  const tbody = document.getElementById('typeBody');
+  if(!avgs.length){ tbody.innerHTML='<tr><td colspan="5">ยังไม่มีข้อมูลกลุ่มนี้</td></tr>'; return; }
+  tbody.innerHTML = avgs.map((item,i)=>{
+    const pct = item.avg ? Math.round(item.avg/5*100) : 0;
+    return `<tr>
+      <td>${item.name}</td>
+      <td><span class="gri-badge">GRI ${item.gri}</span></td>
+      <td><span class="score">${item.avg||'–'}</span></td>
+      <td>${item.n}</td>
+      <td><div class="bar-cell">
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span style="font-size:.75rem;color:#888">${pct}%</span>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Heatmap ────────────────────────────────────────────────────────────
+function renderHeatmap(d){
+  const wrap = document.getElementById('heatmapWrap');
+  const stypes = Object.keys(d.survey);
+  if(!d.total){ wrap.innerHTML='<div class="empty"><div class="icon">📭</div>ยังไม่มีข้อมูล</div>'; return; }
+
+  // collect all unique topic names
+  const allTopics = new Map(); // name -> {gri}
+  for(const st of stypes){
+    for(const item of (d.averages[st]||[])){
+      if(!allTopics.has(item.name)) allTopics.set(item.name, item.gri);
+    }
+  }
+
+  // build lookup: stype -> topic name -> avg
+  const lookup = {};
+  for(const st of stypes){
+    lookup[st] = {};
+    for(const item of (d.averages[st]||[])){ lookup[st][item.name] = item.avg; }
+  }
+
+  const heatClass = v => { if(!v) return 'h0'; if(v>=4.5) return 'h5'; if(v>=3.5) return 'h4'; if(v>=2.5) return 'h3'; if(v>=1.5) return 'h2'; return 'h1'; };
+
+  let html = '<table class="matrix-table"><thead><tr><th>ประเด็น ESG</th>';
+  for(const st of stypes) html += `<th>${d.survey[st].icon}<br>${d.survey[st].name}</th>`;
+  html += '</tr></thead><tbody>';
+
+  for(const [name, gri] of allTopics){
+    html += `<tr><td>${name}<br><span class="gri-badge">GRI ${gri}</span></td>`;
+    for(const st of stypes){
+      const v = lookup[st][name];
+      html += `<td><div class="heat ${heatClass(v)}">${v||'–'}</div></td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  html += '<div style="margin-top:10px;font-size:.73rem;color:#999">สี: <span style="color:#e53935">■</span>1 <span style="color:#fb8c00">■</span>2 <span style="color:#f9a825">■</span>3 <span style="color:#7cb342">■</span>4 <span style="color:#2e7d32">■</span>5</div>';
+  wrap.innerHTML = html;
+}
+
+// ── Recent responses ────────────────────────────────────────────────────
+function renderRecent(d){
+  const tbody = document.getElementById('recentBody');
+  if(!d.recent.length){ tbody.innerHTML='<tr><td colspan="5" class="empty">ยังไม่มีข้อมูล</td></tr>'; return; }
+  tbody.innerHTML = d.recent.map((r,i)=>`<tr>
+    <td>${i+1}</td>
+    <td><span class="stype-chip ${CHIP[r.stype]||''}">${r.sname}</span></td>
+    <td>–</td><td>–</td>
+    <td style="color:#888;font-size:.78rem">${r.at}</td>
+  </tr>`).join('');
+  // enrich with name/org via /api/responses
+  fetch('/api/responses').then(r=>r.json()).then(rows=>{
+    if(!rows.length) return;
+    const top = rows.slice(0,15);
+    tbody.innerHTML = top.map((r,i)=>`<tr>
+      <td>${i+1}</td>
+      <td><span class="stype-chip ${CHIP[r.stakeholder_type]||''}">${statsData.survey[r.stakeholder_type]?.name||r.stakeholder_type}</span></td>
+      <td>${r.respondent_name||'<span style="color:#ccc">–</span>'}</td>
+      <td>${r.respondent_org||'<span style="color:#ccc">–</span>'}</td>
+      <td style="color:#888;font-size:.78rem">${r.submitted_at}</td>
+    </tr>`).join('');
+  }).catch(()=>{});
+}
+
+// ── Open answers ────────────────────────────────────────────────────────
+function renderOpenTabs(d){
+  const wrap  = document.getElementById('openTabs');
+  const stypes = Object.keys(d.survey);
+  wrap.innerHTML = stypes.map(k=>
+    `<button class="tab" data-k="${k}" onclick="loadOpenAnswers('${k}')">${d.survey[k].icon} ${d.survey[k].name}</button>`
+  ).join('');
+}
+
+async function loadOpenAnswers(stype){
+  document.querySelectorAll('#openTabs .tab').forEach(t=>t.classList.toggle('active',t.dataset.k===stype));
+  const wrap = document.getElementById('openAnswersWrap');
+  wrap.innerHTML = '<div class="loading">กำลังโหลด…</div>';
+
+  const r = await fetch(`/api/responses?stype=${stype}`);
+  const rows = await r.json();
+
+  const surveyInfo = {{ survey | tojson }};
+  const openQs = surveyInfo[stype]?.open_qs || [];
+  if(!rows.length){
+    wrap.innerHTML='<div class="empty"><div class="icon">📭</div>ยังไม่มีข้อมูลกลุ่มนี้</div>'; return;
+  }
+
+  let html = '';
+  for(const q of openQs){
+    const answers = rows.map(row=>{
+      try{ const parsed=JSON.parse(row.open_answers); return parsed[q.id]||null; } catch(e){ return null; }
+    }).filter(Boolean);
+    if(!answers.length) continue;
+    html += `<div class="answer-panel"><h3>❓ ${q.text}</h3>`;
+    html += answers.map((a,i)=>`<div class="answer-item">${a}<div class="answer-meta">ผู้ตอบที่ ${i+1}</div></div>`).join('');
+    html += '</div>';
+  }
+  wrap.innerHTML = html || '<div class="empty"><div class="icon">💬</div>ไม่มีคำตอบเปิดในกลุ่มนี้</div>';
+}
+
+// ── Init ────────────────────────────────────────────────────────────────
+loadStats();
+setInterval(loadStats, 60000); // auto-refresh every 60s
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Login | Materiality Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:linear-gradient(135deg,#1b5e20,#2e7d32);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.2);padding:40px 36px;max-width:380px;width:100%;text-align:center}
+.icon{font-size:3rem;margin-bottom:12px}
+h1{font-size:1.3rem;font-weight:700;color:#1a3a2a;margin-bottom:6px}
+p{font-size:.85rem;color:#777;margin-bottom:24px}
+.error{background:#ffebee;border:1px solid #ef9a9a;border-radius:8px;padding:10px;color:#c62828;font-size:.85rem;margin-bottom:16px}
+label{display:block;text-align:left;font-size:.85rem;font-weight:600;color:#444;margin-bottom:6px}
+input[type=password]{width:100%;border:1px solid #ddd;border-radius:8px;padding:11px 14px;font-family:inherit;font-size:.95rem;outline:none;transition:border .2s;margin-bottom:18px}
+input[type=password]:focus{border-color:#2e7d32}
+button{width:100%;background:#2e7d32;color:#fff;border:none;border-radius:8px;padding:13px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:filter .18s}
+button:hover{filter:brightness(1.1)}
+.back{display:block;margin-top:16px;font-size:.82rem;color:#2e7d32;text-decoration:none}
+.back:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">🔐</div>
+  <h1>Admin Dashboard</h1>
+  <p>เข้าสู่ระบบเพื่อดูสถิติและประมวลผลข้อมูล</p>
+
+  {% if error %}
+  <div class="error">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่</div>
+  {% endif %}
+
+  <form method="POST" action="/admin/login">
+    <label for="pw">รหัสผ่าน</label>
+    <input type="password" id="pw" name="password" placeholder="กรอกรหัสผ่าน" autofocus required>
+    <button type="submit">เข้าสู่ระบบ →</button>
+  </form>
+  <a class="back" href="/">← กลับหน้าแบบสอบถาม</a>
+</div>
+</body>
+</html>

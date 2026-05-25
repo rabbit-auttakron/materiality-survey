@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>แบบสอบถาม – {{ data.name }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f5f5f5;color:#1a3a2a;line-height:1.6;font-size:15px}
+
+nav{background:{{ data.color }};color:#fff;padding:12px 20px;display:flex;align-items:center;gap:10px}
+nav a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.9rem}
+nav a:hover{color:#fff}
+nav h1{flex:1;font-size:1rem;font-weight:600}
+
+.progress-bar{height:5px;background:rgba(0,0,0,.1)}
+.progress-fill{height:5px;background:{{ data.color }};width:0%;transition:width .4s}
+
+.hero{background:{{ data.color }};color:#fff;padding:28px 20px;text-align:center}
+.hero .icon{font-size:2.8rem;margin-bottom:6px}
+.hero h2{font-size:1.3rem;font-weight:700}
+.hero p{font-size:.9rem;opacity:.85;margin-top:4px;max-width:540px;margin-left:auto;margin-right:auto}
+
+.container{max-width:900px;margin:24px auto;padding:0 16px 60px}
+
+/* ── respondent info ── */
+.info-card{background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.08);margin-bottom:20px}
+.info-card h3{font-size:.95rem;font-weight:700;color:#333;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #eee}
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.info-row{grid-template-columns:1fr}}
+label.field{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:#555;font-weight:500}
+label.field input{border:1px solid #ddd;border-radius:6px;padding:8px 12px;font-family:inherit;font-size:.9rem;outline:none;transition:border .2s}
+label.field input:focus{border-color:{{ data.color }}}
+.optional{font-size:.75rem;color:#999;font-weight:400}
+
+/* ── section card ── */
+.section-card{background:#fff;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.08);margin-bottom:20px;overflow:hidden}
+.section-head{padding:14px 20px;background:linear-gradient(90deg,{{ data.color }}18,transparent);border-bottom:2px solid {{ data.color }}}
+.section-head h3{font-size:1rem;font-weight:700;color:#1a3a2a}
+.section-head p{font-size:.83rem;color:#666;margin-top:4px}
+
+/* ── scale legend ── */
+.scale-legend{display:flex;gap:0;background:#f8f8f8;border-bottom:1px solid #eee;padding:8px 20px}
+.scale-legend span{font-size:.76rem;color:#666}
+.scale-legend .pills{display:flex;gap:6px;margin-left:auto}
+.pill{display:inline-block;border-radius:20px;padding:1px 10px;font-size:.73rem;font-weight:600;color:#fff}
+.p1{background:#e53935}.p2{background:#fb8c00}.p3{background:#f9a825}.p4{background:#7cb342}.p5{background:#2e7d32}
+
+/* ── topic table ── */
+.topic-table{width:100%}
+.topic-row{border-bottom:1px solid #f0f0f0;display:grid;grid-template-columns:1fr auto;gap:0}
+.topic-row:last-child{border-bottom:none}
+.topic-main{padding:12px 20px 8px}
+.topic-name{font-size:.9rem;font-weight:500;color:#222}
+.topic-gri{display:inline-block;background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 7px;font-size:.72rem;font-weight:600;margin-top:3px}
+.topic-ratings{padding:10px 20px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rating-btn{display:none}
+.rating-label{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;cursor:pointer;border:2px solid #ddd;color:#666;transition:all .15s;user-select:none}
+.rating-label:hover{transform:scale(1.12)}
+.rating-btn:checked + .rating-label{color:#fff;border-color:transparent;transform:scale(1.18);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+input[value="1"]:checked + .rating-label{background:#e53935;border-color:#e53935}
+input[value="2"]:checked + .rating-label{background:#fb8c00;border-color:#fb8c00}
+input[value="3"]:checked + .rating-label{background:#f9a825;border-color:#f9a825}
+input[value="4"]:checked + .rating-label{background:#7cb342;border-color:#7cb342}
+input[value="5"]:checked + .rating-label{background:#2e7d32;border-color:#2e7d32}
+.comment-col{padding:10px 20px 10px 0;display:flex;align-items:center}
+.comment-col input{border:1px solid #ddd;border-radius:6px;padding:5px 10px;font-family:inherit;font-size:.8rem;width:140px;outline:none}
+.comment-col input:focus{border-color:{{ data.color }}}
+
+/* mobile: stack ratings below topic name */
+@media(max-width:640px){
+  .topic-row{grid-template-columns:1fr}
+  .comment-col{padding:0 20px 12px;border-top:none}
+  .comment-col input{width:100%}
+}
+
+/* ── open questions ── */
+.open-card{background:#fff;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.08);padding:20px;margin-bottom:20px}
+.open-card h3{font-size:1rem;font-weight:700;margin-bottom:14px;color:#1a3a2a;padding-bottom:10px;border-bottom:1px solid #eee}
+.open-q{margin-bottom:16px}
+.open-q label{display:block;font-size:.88rem;font-weight:600;color:#444;margin-bottom:6px}
+.open-q textarea{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-family:inherit;font-size:.88rem;resize:vertical;min-height:72px;outline:none;transition:border .2s;line-height:1.5}
+.open-q textarea:focus{border-color:{{ data.color }}}
+
+/* ── submit ── */
+.submit-area{text-align:center;padding:10px 0}
+.btn-submit{background:{{ data.color }};color:#fff;border:none;border-radius:8px;padding:14px 48px;font-family:inherit;font-size:1rem;font-weight:700;cursor:pointer;transition:filter .18s;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.btn-submit:hover{filter:brightness(1.12)}
+.privacy-note{font-size:.78rem;color:#999;margin-top:10px}
+
+/* ── sticky progress ── */
+.sticky-prog{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;padding:10px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 -2px 8px rgba(0,0,0,.08);z-index:100}
+.prog-text{font-size:.82rem;color:#555;flex:1}
+.prog-mini{height:6px;background:#eee;border-radius:3px;width:160px}
+.prog-mini-fill{height:6px;background:{{ data.color }};border-radius:3px;width:0%;transition:width .3s}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/">← กลับหน้าหลัก</a>
+  <h1>{{ data.icon }} ชุดที่: {{ data.name }}</h1>
+</nav>
+<div class="progress-bar"><div class="progress-fill" id="progFill"></div></div>
+
+<div class="hero">
+  <div class="icon">{{ data.icon }}</div>
+  <h2>{{ data.name }}</h2>
+  <p>{{ data.desc }}</p>
+</div>
+
+<div class="container">
+<form method="POST" action="/submit" id="surveyForm">
+<input type="hidden" name="stype" value="{{ stype }}">
+
+<!-- respondent info -->
+<div class="info-card">
+  <h3>ข้อมูลผู้ตอบแบบสอบถาม <span class="optional">(ไม่บังคับ – ข้อมูลเป็นความลับ)</span></h3>
+  <div class="info-row">
+    <label class="field">ชื่อ-นามสกุล / ชื่อองค์กร<input type="text" name="respondent_name" placeholder="ไม่บังคับ"></label>
+    <label class="field">หน่วยงาน / บริษัท<input type="text" name="respondent_org" placeholder="ไม่บังคับ"></label>
+  </div>
+</div>
+
+<!-- Section A: ratings -->
+<div class="section-card">
+  <div class="section-head">
+    <h3>ส่วน A: {{ data.section_a }}</h3>
+    <p>{{ data.instruction }}</p>
+  </div>
+  <div class="scale-legend">
+    <span>เกณฑ์การให้คะแนน:</span>
+    <div class="pills">
+      <span class="pill p1">1 ไม่สำคัญ</span>
+      <span class="pill p2">2 สำคัญน้อย</span>
+      <span class="pill p3">3 ปานกลาง</span>
+      <span class="pill p4">4 สำคัญ</span>
+      <span class="pill p5">5 สำคัญมาก</span>
+    </div>
+  </div>
+  <table class="topic-table">
+    {% for t in data.topics %}
+    <tr class="topic-row">
+      <td class="topic-main">
+        <div class="topic-name">{{ loop.index }}. {{ t.name }}</div>
+        <span class="topic-gri">GRI {{ t.gri }}</span>
+      </td>
+      <td class="topic-ratings">
+        {% for i in range(1,6) %}
+        <input class="rating-btn" type="radio" name="r_{{ t.id }}" id="r{{ t.id }}_{{ i }}" value="{{ i }}">
+        <label class="rating-label" for="r{{ t.id }}_{{ i }}">{{ i }}</label>
+        {% endfor %}
+      </td>
+      <td class="comment-col">
+        <input type="text" name="c_{{ t.id }}" placeholder="ความเห็นเพิ่มเติม…">
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<!-- Section B: open questions -->
+<div class="open-card">
+  <h3>ส่วน B: ความต้องการและข้อเสนอแนะ</h3>
+  {% for q in data.open_qs %}
+  <div class="open-q">
+    <label>{{ loop.index }}. {{ q.text }}</label>
+    <textarea name="open_{{ q.id }}" placeholder="กรุณาระบุความเห็น…"></textarea>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="submit-area">
+  <button type="submit" class="btn-submit">ส่งแบบสอบถาม ✓</button>
+  <div class="privacy-note">ข้อมูลทั้งหมดจะถูกเก็บเป็นความลับและใช้เพื่อการประเมิน Materiality เท่านั้น</div>
+</div>
+</form>
+</div>
+
+<!-- sticky progress -->
+<div class="sticky-prog">
+  <span class="prog-text">ตอบแล้ว <span id="answered">0</span> / {{ data.topics|length }} ประเด็น</span>
+  <div class="prog-mini"><div class="prog-mini-fill" id="progMini"></div></div>
+</div>
+
+<script>
+const total = {{ data.topics|length }};
+function updateProgress(){
+  const answered=new Set();
+  document.querySelectorAll('input[type=radio]:checked').forEach(r=>{
+    answered.add(r.name);
+  });
+  const pct=Math.round(answered.size/total*100);
+  document.getElementById('answered').textContent=answered.size;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progMini').style.width=pct+'%';
+}
+document.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',updateProgress));
+
+document.getElementById('surveyForm').addEventListener('submit',function(e){
+  const answered=new Set();
+  document.querySelectorAll('input[type=radio]:checked').forEach(r=>answered.add(r.name));
+  if(answered.size<total){
+    if(!confirm(`คุณยังตอบไม่ครบ (ตอบแล้ว ${answered.size}/${total} ประเด็น)\nต้องการส่งแบบสอบถามหรือไม่?`)){
+      e.preventDefault();
+    }
+  }
+});
+</script>
+</body>
+</html>
