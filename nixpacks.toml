@@ -1,0 +1,7 @@
+providers = []
+
+[phases.setup]
+nixPkgs = ["caddy"]
+
+[start]
+cmd = "caddy file-server --listen :${PORT:-8080} --root /app"
