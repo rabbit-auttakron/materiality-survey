@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>แก้ไขแบบสำรวจ | Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f4f6f9;color:#1a2a1a;font-size:14px}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:768px){.layout{grid-template-columns:1fr}}
+
+/* sidebar */
+.sidebar{background:#1a3a2a;color:#c8e6c9;padding:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-logo h2{color:#fff;font-size:.95rem;font-weight:700}
+.sidebar-logo p{font-size:.72rem;color:#81c784;margin-top:2px}
+.sidebar nav a{display:flex;align-items:center;gap:8px;padding:10px 16px;text-decoration:none;color:#a5d6a7;font-size:.85rem;transition:background .15s;border-left:3px solid transparent}
+.sidebar nav a:hover,.sidebar nav a.active{background:rgba(255,255,255,.08);color:#fff;border-left-color:#66bb6a}
+.sidebar-section{padding:8px 16px;font-size:.68rem;color:#558b2f;text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
+.sidebar-bottom{padding:12px 16px;border-top:1px solid rgba(255,255,255,.1)}
+.sidebar-bottom a{color:#ef9a9a;font-size:.78rem;text-decoration:none;display:block;margin-bottom:4px}
+
+/* main */
+.main{overflow-y:auto}
+.topbar{background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:50}
+.topbar h1{font-size:.95rem;font-weight:700;flex:1;color:#1a3a2a}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:6px;font-family:inherit;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;border:none;transition:filter .15s}
+.btn-green{background:#2e7d32;color:#fff}.btn-green:hover{filter:brightness(1.1)}
+.btn-blue{background:#1565C0;color:#fff}.btn-blue:hover{filter:brightness(1.1)}
+.btn-out{background:#fff;color:#2e7d32;border:1.5px solid #2e7d32}.btn-out:hover{background:#f1f8e9}
+.btn-red{background:#fff;color:#c62828;border:1.5px solid #e57373}.btn-red:hover{background:#ffebee}
+.btn-gray{background:#f5f5f5;color:#555;border:1.5px solid #ddd}.btn-gray:hover{background:#eee}
+.btn-sm{padding:4px 10px;font-size:.75rem}
+.btn-icon{padding:4px 8px;font-size:.8rem}
+
+.content{padding:18px 20px 60px}
+
+/* group tabs */
+.group-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px}
+.gtab{padding:7px 16px;border-radius:20px;font-size:.82rem;font-weight:600;text-decoration:none;background:#fff;color:#666;border:1.5px solid #ddd;transition:all .15s}
+.gtab:hover{border-color:#2e7d32;color:#2e7d32}
+.gtab.active{color:#fff;border-color:transparent}
+
+/* toast */
+.toast{background:#1b5e20;color:#fff;border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:.85rem;display:flex;align-items:center;gap:8px;animation:slideIn .3s ease}
+@keyframes slideIn{from{transform:translateY(-10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* cards */
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 5px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden}
+.card-head{padding:13px 18px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px}
+.card-head h3{font-size:.9rem;font-weight:700;flex:1;color:#1a3a2a}
+.card-body{padding:16px 18px}
+
+/* meta form */
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.meta-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:600px){.meta-grid,.meta-grid-3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:.78rem;font-weight:600;color:#555}
+.field input,.field textarea{border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:inherit;font-size:.88rem;outline:none;transition:border .2s}
+.field input:focus,.field textarea:focus{border-color:#2e7d32}
+.field textarea{resize:vertical;min-height:60px;line-height:1.5}
+.color-preview{width:36px;height:36px;border-radius:6px;border:2px solid #ddd;cursor:pointer}
+
+/* topics table */
+.topics-table{width:100%;border-collapse:collapse}
+.topics-table th{background:#f8f8f8;font-size:.75rem;font-weight:700;color:#666;padding:8px 10px;text-align:left;border-bottom:2px solid #eee}
+.topics-table td{padding:7px 10px;font-size:.83rem;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.topics-table tr:last-child td{border-bottom:none}
+.topics-table tr:hover td{background:#fafffe}
+.gri-badge{background:#e8f5e9;color:#2e7d32;border-radius:4px;padding:1px 7px;font-size:.7rem;font-weight:700}
+.drag-handle{color:#bbb;cursor:grab;font-size:1rem;padding:0 4px}
+
+/* inline edit row */
+.edit-row{background:#f0f8ff;border-left:3px solid #1565C0}
+.edit-row td{padding:10px}
+.edit-form{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end}
+.edit-form-q{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end}
+.hidden{display:none}
+
+/* add form */
+.add-form{background:#f9fdf9;border-radius:8px;padding:14px;margin-top:12px;border:1.5px dashed #a5d6a7}
+.add-form h4{font-size:.82rem;font-weight:700;color:#2e7d32;margin-bottom:10px}
+.add-form-grid{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end}
+.add-form-grid-q{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+
+/* number badge */
+.num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#e8f5e9;color:#2e7d32;border-radius:50%;font-size:.72rem;font-weight:700}
+
+/* danger zone */
+.danger-zone{border:1.5px solid #ef9a9a;border-radius:8px;padding:14px;margin-top:8px;background:#fff8f8}
+.danger-zone h4{color:#c62828;font-size:.85rem;font-weight:700;margin-bottom:6px}
+.danger-zone p{font-size:.78rem;color:#888;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>✏️ Survey Editor</h2>
+    <p>แก้ไขเนื้อหาแบบสำรวจ</p>
+  </div>
+  <nav>
+    <div class="sidebar-section">กลุ่มผู้มีส่วนได้เสีย</div>
+    {% for k, v in survey.items() %}
+    <a href="{{ url_for('editor_group', stype=k) }}"
+       class="{% if k == stype %}active{% endif %}"
+       style="{% if k == stype %}background:{{ v.color }}22;border-left-color:{{ v.color }}{% endif %}">
+      {{ v.icon }} {{ v.name }}
+    </a>
+    {% endfor %}
+    <div class="sidebar-section">อื่นๆ</div>
+    <a href="{{ url_for('admin') }}">📊 Dashboard</a>
+    <a href="{{ url_for('index') }}" target="_blank">🌐 ดูหน้าสำรวจ</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <form method="POST" action="{{ url_for('editor_reset') }}"
+          onsubmit="return confirm('รีเซ็ตข้อมูลทั้งหมดเป็นค่าเริ่มต้น? การเปลี่ยนแปลงทั้งหมดจะหายไป')">
+      <button class="btn btn-red btn-sm" type="submit" style="width:100%;justify-content:center">↺ Reset ข้อมูล</button>
+    </form>
+    <a href="{{ url_for('admin_logout') }}" style="margin-top:8px">🚪 ออกจากระบบ</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h1>✏️ แก้ไขแบบสำรวจ — {{ survey[stype].icon }} {{ survey[stype].name }}</h1>
+    <a class="btn btn-out btn-sm" href="{{ url_for('survey', stype=stype) }}" target="_blank">👁 Preview</a>
+    <a class="btn btn-gray btn-sm" href="{{ url_for('admin') }}">← Dashboard</a>
+  </div>
+
+  <div class="content">
+
+    {% if msg %}
+    <div class="toast">✅ {{ msg }}</div>
+    {% endif %}
+
+    <!-- GROUP TABS -->
+    <div class="group-tabs">
+      {% for k, v in survey.items() %}
+      <a class="gtab {% if k == stype %}active{% endif %}"
+         href="{{ url_for('editor_group', stype=k) }}"
+         style="{% if k == stype %}background:{{ v.color }}{% endif %}">
+        {{ v.icon }} {{ v.name }}
+      </a>
+      {% endfor %}
+    </div>
+
+    <!-- ── CARD 1: Group Metadata ── -->
+    <div class="card">
+      <div class="card-head">
+        <h3>⚙️ ข้อมูลกลุ่มผู้มีส่วนได้เสีย</h3>
+        <button class="btn btn-gray btn-sm" onclick="toggleSection('metaBody')">แสดง/ซ่อน</button>
+      </div>
+      <div class="card-body" id="metaBody">
+        <form method="POST" action="{{ url_for('editor_meta', stype=stype) }}">
+          <div class="meta-grid" style="margin-bottom:12px">
+            <div class="field">
+              <label>ชื่อกลุ่ม</label>
+              <input name="name" value="{{ group.name }}" required>
+            </div>
+            <div class="field">
+              <label>Icon (emoji)</label>
+              <input name="icon" value="{{ group.icon }}" placeholder="เช่น 💼 🛒 👷">
+            </div>
+          </div>
+          <div class="meta-grid" style="margin-bottom:12px">
+            <div class="field">
+              <label>สีธีม (HEX)</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" id="colorPicker" value="{{ group.color }}"
+                       oninput="document.getElementById('colorInput').value=this.value"
+                       style="width:44px;height:36px;padding:2px;border:1.5px solid #ddd;border-radius:6px;cursor:pointer">
+                <input name="color" id="colorInput" value="{{ group.color }}"
+                       oninput="document.getElementById('colorPicker').value=this.value"
+                       placeholder="#2e7d32" style="flex:1">
+              </div>
+            </div>
+            <div class="field">
+              <label>คำอธิบายกลุ่ม</label>
+              <input name="desc_text" value="{{ group.desc_text }}">
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>หัวข้อส่วน A (section_a)</label>
+            <input name="section_a" value="{{ group.section_a }}">
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label>คำชี้แจง (instruction)</label>
+            <textarea name="instruction" rows="2">{{ group.instruction }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-green">💾 บันทึกข้อมูลกลุ่ม</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── CARD 2: Topics ── -->
+    <div class="card">
+      <div class="card-head">
+        <h3>📋 ประเด็น ESG (ส่วน A — คะแนน 1–5)</h3>
+        <span style="font-size:.78rem;color:#888">{{ topics|length }} ประเด็น</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="topics-table">
+          <thead>
+            <tr>
+              <th style="width:32px">#</th>
+              <th>ประเด็น ESG</th>
+              <th style="width:80px">GRI</th>
+              <th style="width:130px;text-align:center">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for t in topics %}
+            <tr id="trow-{{ t.id }}">
+              <td><span class="num">{{ loop.index }}</span></td>
+              <td>{{ t.name }}</td>
+              <td><span class="gri-badge">{{ t.gri }}</span></td>
+              <td style="text-align:center">
+                <button class="btn btn-blue btn-icon" onclick="toggleEdit('tedit-{{ t.id }}','trow-{{ t.id }}')" title="แก้ไข">✏️</button>
+                <!-- move buttons -->
+                <form method="POST" action="{{ url_for('topic_move', tid=t.id) }}" style="display:inline">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <input type="hidden" name="direction" value="up">
+                  <button class="btn btn-gray btn-icon" type="submit" {% if loop.first %}disabled{% endif %} title="เลื่อนขึ้น">↑</button>
+                </form>
+                <form method="POST" action="{{ url_for('topic_move', tid=t.id) }}" style="display:inline">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <input type="hidden" name="direction" value="down">
+                  <button class="btn btn-gray btn-icon" type="submit" {% if loop.last %}disabled{% endif %} title="เลื่อนลง">↓</button>
+                </form>
+                <form method="POST" action="{{ url_for('topic_delete', tid=t.id) }}" style="display:inline"
+                      onsubmit="return confirm('ลบประเด็น &quot;{{ t.name[:20] }}&quot; ใช่หรือไม่?')">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <button class="btn btn-red btn-icon" type="submit" title="ลบ">🗑️</button>
+                </form>
+              </td>
+            </tr>
+            <!-- inline edit row -->
+            <tr id="tedit-{{ t.id }}" class="edit-row hidden">
+              <td colspan="4" style="padding:12px 16px">
+                <form method="POST" action="{{ url_for('topic_save', tid=t.id) }}">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <div class="edit-form">
+                    <div class="field">
+                      <label>ชื่อประเด็น</label>
+                      <input name="name" value="{{ t.name }}" required>
+                    </div>
+                    <div class="field" style="width:90px">
+                      <label>GRI</label>
+                      <input name="gri" value="{{ t.gri }}" placeholder="เช่น 305">
+                    </div>
+                    <div class="field" style="justify-content:flex-end;flex-direction:row;gap:6px;align-items:flex-end">
+                      <button type="submit" class="btn btn-green btn-sm">💾 บันทึก</button>
+                      <button type="button" class="btn btn-gray btn-sm"
+                              onclick="toggleEdit('tedit-{{ t.id }}','trow-{{ t.id }}')">ยกเลิก</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <!-- Add new topic -->
+        <div style="padding:12px 16px">
+          <div class="add-form">
+            <h4>➕ เพิ่มประเด็นใหม่</h4>
+            <form method="POST" action="{{ url_for('topic_add', stype=stype) }}">
+              <div class="add-form-grid">
+                <div class="field">
+                  <label>ชื่อประเด็น ESG</label>
+                  <input name="name" placeholder="เช่น การใช้น้ำในกระบวนการผลิต" required>
+                </div>
+                <div class="field" style="width:90px">
+                  <label>GRI</label>
+                  <input name="gri" placeholder="303">
+                </div>
+                <div class="field" style="justify-content:flex-end;align-items:flex-end">
+                  <button type="submit" class="btn btn-green">➕ เพิ่ม</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CARD 3: Open Questions ── -->
+    <div class="card">
+      <div class="card-head">
+        <h3>💬 คำถามปลายเปิด (ส่วน B)</h3>
+        <span style="font-size:.78rem;color:#888">{{ open_qs|length }} คำถาม</span>
+      </div>
+      <div class="card-body" style="padding:0">
+        <table class="topics-table">
+          <thead>
+            <tr>
+              <th style="width:32px">#</th>
+              <th>คำถาม</th>
+              <th style="width:130px;text-align:center">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for q in open_qs %}
+            <tr id="qrow-{{ q.id }}">
+              <td><span class="num" style="background:#e8eaf6;color:#3949ab">{{ loop.index }}</span></td>
+              <td style="font-size:.82rem">{{ q.text }}</td>
+              <td style="text-align:center">
+                <button class="btn btn-blue btn-icon" onclick="toggleEdit('qedit-{{ q.id }}','qrow-{{ q.id }}')" title="แก้ไข">✏️</button>
+                <form method="POST" action="{{ url_for('openq_move', qid=q.id) }}" style="display:inline">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <input type="hidden" name="direction" value="up">
+                  <button class="btn btn-gray btn-icon" type="submit" {% if loop.first %}disabled{% endif %}>↑</button>
+                </form>
+                <form method="POST" action="{{ url_for('openq_move', qid=q.id) }}" style="display:inline">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <input type="hidden" name="direction" value="down">
+                  <button class="btn btn-gray btn-icon" type="submit" {% if loop.last %}disabled{% endif %}>↓</button>
+                </form>
+                <form method="POST" action="{{ url_for('openq_delete', qid=q.id) }}" style="display:inline"
+                      onsubmit="return confirm('ลบคำถามนี้ใช่หรือไม่?')">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <button class="btn btn-red btn-icon" type="submit">🗑️</button>
+                </form>
+              </td>
+            </tr>
+            <tr id="qedit-{{ q.id }}" class="edit-row hidden">
+              <td colspan="3" style="padding:12px 16px">
+                <form method="POST" action="{{ url_for('openq_save', qid=q.id) }}">
+                  <input type="hidden" name="stype" value="{{ stype }}">
+                  <div class="edit-form-q">
+                    <div class="field">
+                      <label>คำถาม</label>
+                      <textarea name="text" rows="2" required>{{ q.text }}</textarea>
+                    </div>
+                    <div class="field" style="justify-content:flex-end;align-items:flex-end;flex-direction:row;gap:6px">
+                      <button type="submit" class="btn btn-green btn-sm">💾 บันทึก</button>
+                      <button type="button" class="btn btn-gray btn-sm"
+                              onclick="toggleEdit('qedit-{{ q.id }}','qrow-{{ q.id }}')">ยกเลิก</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+        <!-- Add new open question -->
+        <div style="padding:12px 16px">
+          <div class="add-form">
+            <h4>➕ เพิ่มคำถามใหม่</h4>
+            <form method="POST" action="{{ url_for('openq_add', stype=stype) }}">
+              <div class="add-form-grid-q">
+                <div class="field">
+                  <label>ข้อความคำถาม</label>
+                  <textarea name="text" rows="2" placeholder="พิมพ์คำถามที่ต้องการเพิ่ม…" required></textarea>
+                </div>
+                <div class="field" style="justify-content:flex-end;align-items:flex-end">
+                  <button type="submit" class="btn btn-green">➕ เพิ่ม</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Preview link ── -->
+    <div style="text-align:center;padding:8px 0">
+      <a class="btn btn-green" href="{{ url_for('survey', stype=stype) }}" target="_blank">
+        👁 ดูหน้าแบบสำรวจจริง — {{ survey[stype].name }}
+      </a>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script>
+function toggleEdit(editId, rowId) {
+  const editRow = document.getElementById(editId);
+  const dataRow = document.getElementById(rowId);
+  const isHidden = editRow.classList.contains('hidden');
+  // close all other edit rows first
+  document.querySelectorAll('.edit-row').forEach(r => r.classList.add('hidden'));
+  if (isHidden) {
+    editRow.classList.remove('hidden');
+    editRow.querySelector('input,textarea')?.focus();
+  }
+}
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+// Auto-dismiss toast after 4 seconds
+const toast = document.querySelector('.toast');
+if (toast) setTimeout(() => toast.style.opacity = '0', 3500);
+</script>
+</body>
+</html>
